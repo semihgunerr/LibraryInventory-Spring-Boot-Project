@@ -1,12 +1,15 @@
 package library.librarymanagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-public class Authors {
+public class Author {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,8 +19,12 @@ public class Authors {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "author")
-    private List<Book> books = new ArrayList<>();
+    @Column(name = "date_of_birth")
+    private LocalDate dateOfBirth;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties({"author"})
+    private Set<Book> books = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -35,11 +42,19 @@ public class Authors {
         this.name = name;
     }
 
-    public List<Book> getBooks() {
+    public Set<Book> getBooks() {
         return books;
     }
 
-    public void setBooks(List<Book> books) {
+    public void setBooks(Set<Book> books) {
         this.books = books;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
     }
 }
